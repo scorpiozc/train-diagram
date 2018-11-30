@@ -1,40 +1,18 @@
 package cn.com.bjjdsy.calc.walktime;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.lang3.time.DateFormatUtils;
 
 import cn.com.bjjdsy.calc.entity.AccseDateAttribute;
 import cn.com.bjjdsy.calc.entity.AccseTimeAttribute;
 import cn.com.bjjdsy.calc.entity.AccseWalkTime;
-import cn.com.bjjdsy.calc.entity.ODInfo;
 import cn.com.bjjdsy.common.CalcConstant;
 
 public class CalcWalkTime {
 
 	public static void main(String[] args) {
 
-	}
-
-	private AccseWalkTime getWalkTime(ODInfo oDInfo, int type) {
-		// get dateType
-		AccseDateAttribute dateAttr = this.getAccseDateAttribute(oDInfo.getoDDate());
-		// get timeAttr
-		int timeAttr = this.getTimeAttribute(dateAttr);
-		// get walkTime
-		AccseWalkTime walkTime = null;
-		if (type == 0) {
-			walkTime = this.getOWalkTime(oDInfo.getoStationCode(), dateAttr.getDateType(), timeAttr);
-		} else if (type == 1) {
-			walkTime = this.getDWalkTime(oDInfo.getdStationCode(), dateAttr.getDateType(), timeAttr);
-		} else if (type == 2) {
-			walkTime = this.getTWalkTime(oDInfo.getoStationCode(), oDInfo.getdStationCode(), dateAttr.getDateType(),
-					timeAttr, oDInfo.getFromDirect(), oDInfo.getToDirect());
-		}
-		return walkTime;
 	}
 
 	private int getTimeAttribute(AccseDateAttribute dateAttr) {
@@ -55,9 +33,8 @@ public class CalcWalkTime {
 		return timeAttribute;
 	}
 
-	private AccseDateAttribute getAccseDateAttribute(Date oDDate) {
-		String key = DateFormatUtils.format(oDDate, "yyyyMMdd");
-		return CalcConstant.accseDateAttributeDict.get(key);
+	private AccseDateAttribute getAccseDateAttribute(String cmDate) {
+		return CalcConstant.accseDateAttributeDict.get(cmDate);
 	}
 
 	private List<AccseTimeAttribute> findAccseTimeAttribute(String stationCode, int dateType) {
@@ -65,18 +42,30 @@ public class CalcWalkTime {
 		return CalcConstant.accseTimeAttributeDict.get(key);
 	}
 
-	public AccseWalkTime getOWalkTime(String oStationCode, int dateType, int timeAttr) {
-		return this.getWalkTime(oStationCode, oStationCode, dateType, timeAttr, 0, toDirect);
+	public AccseWalkTime getOWalkTime(String cmDate, String fromAccStationCode, int toDirect) {
+		// get dateType
+		AccseDateAttribute dateAttr = this.getAccseDateAttribute(cmDate);
+		// get timeAttr
+		int timeAttr = this.getTimeAttribute(dateAttr);
+		return this.getWalkTime(fromAccStationCode, fromAccStationCode, dateAttr.getDateType(), timeAttr, 0, toDirect);
 	}
 
-	public AccseWalkTime getDWalkTime(String dStationCode, int dateType, int timeAttr) {
-		return this.getWalkTime(dStationCode, dStationCode, dateType, timeAttr, fromDirect, 0);
+	public AccseWalkTime getDWalkTime(String cmDate, String toAccStationCode, int fromDirect) {
+		// get dateType
+		AccseDateAttribute dateAttr = this.getAccseDateAttribute(cmDate);
+		// get timeAttr
+		int timeAttr = this.getTimeAttribute(dateAttr);
+		return this.getWalkTime(toAccStationCode, toAccStationCode, dateAttr.getDateType(), timeAttr, fromDirect, 0);
 	}
 
-	public AccseWalkTime getTWalkTime(String fromAccStationCode, String toAccStationCode, int dateType, int timeAttr,
-			int fromDirect, int toDirect) {
-
-		return this.getWalkTime(fromAccStationCode, toAccStationCode, dateType, timeAttr, fromDirect, toDirect);
+	public AccseWalkTime getTWalkTime(String cmDate, String fromAccStationCode, String toAccStationCode, int fromDirect,
+			int toDirect) {
+		// get dateType
+		AccseDateAttribute dateAttr = this.getAccseDateAttribute(cmDate);
+		// get timeAttr
+		int timeAttr = this.getTimeAttribute(dateAttr);
+		return this.getWalkTime(fromAccStationCode, toAccStationCode, dateAttr.getDateType(), timeAttr, fromDirect,
+				toDirect);
 	}
 
 	private AccseWalkTime getWalkTime(String fromAccStationCode, String toAccStationCode, int dateType, int timeAttr,
