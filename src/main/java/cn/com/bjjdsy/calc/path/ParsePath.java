@@ -48,7 +48,7 @@ public class ParsePath {
 		sub.setFromStation(subs[0]);
 		sub.setToStation(subs[subs.length - 1]);
 		sub.setKpath(path);
-		sub.setDirect(this.getDirect(sub.getFromStation(), sub.getToStation()));
+		sub.setDirect(this.getDirect(subs[0], subs[1]));
 		return sub;
 	}
 

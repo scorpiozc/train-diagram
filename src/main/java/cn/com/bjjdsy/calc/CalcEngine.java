@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import cn.com.bjjdsy.calc.entity.KPath;
 import cn.com.bjjdsy.calc.entity.ODInfo;
+import cn.com.bjjdsy.calc.entity.WalkTimeQO;
 import cn.com.bjjdsy.calc.path.ParsePath;
 import cn.com.bjjdsy.calc.walktime.CalcWalkTime;
 
@@ -26,9 +27,10 @@ public class CalcEngine {
 		List<KPath> pathList = new ParsePath().parse(path);
 		ODInfo od = new ODInfo();
 		for (KPath p : pathList) {
+			WalkTimeQO qo = new WalkTimeQO();
 			// get walk time
 			od.setToDirect(Integer.parseInt(p.getDirect()));
-			new CalcWalkTime().getWalkTime(od, 0);
+			new CalcWalkTime().getOWalkTime(qo.getCmDate(), qo.getFromAccStationCode(), qo.getToDirect());
 
 // get TRIP_NO
 
