@@ -15,7 +15,7 @@ public class CalcWalkTime {
 
 	}
 
-	private int getTimeAttribute(AccseDateAttribute dateAttr) {
+	private int getTimeAttribute(String stationCode, AccseDateAttribute dateAttr) {
 		Map<Integer, Integer> accseTimeAttributeMap = CalcConstant.accseTimeAttributeMap;
 		int dateType = CalcConstant.dateTypeMap.get(dateAttr.getSection() + ":" + dateAttr.getDateType());
 		List<AccseTimeAttribute> accseTimeAttributeList = this.findAccseTimeAttribute("103", dateType);
@@ -43,33 +43,23 @@ public class CalcWalkTime {
 	}
 
 	public AccseWalkTime getOWalkTime(String cmDate, String fromAccStationCode, int toDirect) {
-		// get dateType
-		AccseDateAttribute dateAttr = this.getAccseDateAttribute(cmDate);
-		// get timeAttr
-		int timeAttr = this.getTimeAttribute(dateAttr);
-		return this.getWalkTime(fromAccStationCode, fromAccStationCode, dateAttr.getDateType(), timeAttr, 0, toDirect);
+		return this.getWalkTime(cmDate, fromAccStationCode, fromAccStationCode, 0, toDirect);
 	}
 
 	public AccseWalkTime getDWalkTime(String cmDate, String toAccStationCode, int fromDirect) {
-		// get dateType
-		AccseDateAttribute dateAttr = this.getAccseDateAttribute(cmDate);
-		// get timeAttr
-		int timeAttr = this.getTimeAttribute(dateAttr);
-		return this.getWalkTime(toAccStationCode, toAccStationCode, dateAttr.getDateType(), timeAttr, fromDirect, 0);
+		return this.getWalkTime(cmDate, toAccStationCode, toAccStationCode, fromDirect, 0);
 	}
 
 	public AccseWalkTime getTWalkTime(String cmDate, String fromAccStationCode, String toAccStationCode, int fromDirect,
 			int toDirect) {
-		// get dateType
-		AccseDateAttribute dateAttr = this.getAccseDateAttribute(cmDate);
-		// get timeAttr
-		int timeAttr = this.getTimeAttribute(dateAttr);
-		return this.getWalkTime(fromAccStationCode, toAccStationCode, dateAttr.getDateType(), timeAttr, fromDirect,
-				toDirect);
+		return this.getWalkTime(cmDate, fromAccStationCode, toAccStationCode, fromDirect, toDirect);
 	}
 
-	private AccseWalkTime getWalkTime(String fromAccStationCode, String toAccStationCode, int dateType, int timeAttr,
-			int fromDirect, int toDirect) {
+	private AccseWalkTime getWalkTime(String cmDate, String fromAccStationCode, String toAccStationCode, int fromDirect,
+			int toDirect) {
+		AccseDateAttribute dateAttr = this.getAccseDateAttribute(cmDate);
+		int dateType = dateAttr.getDateType();
+		int timeAttr = this.getTimeAttribute(fromAccStationCode, dateAttr);
 		String key = fromAccStationCode + ":" + toAccStationCode + ":" + dateType + ":" + timeAttr + ":" + fromDirect
 				+ ":" + toDirect;
 		return CalcConstant.accseWalkTimeDict.get(key);

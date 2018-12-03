@@ -7,6 +7,8 @@ import java.util.TreeMap;
 import cn.com.bjjdsy.calc.entity.AccseDateAttribute;
 import cn.com.bjjdsy.calc.entity.AccseTimeAttribute;
 import cn.com.bjjdsy.calc.entity.AccseWalkTime;
+import cn.com.bjjdsy.calc.entity.RunMap;
+import cn.com.bjjdsy.calc.entity.RunMapKey;
 
 public class CalcConstant {
 
@@ -37,4 +39,12 @@ public class CalcConstant {
 	 * key:fromAccStationCode:toAccStationCode:dateType:timeAttr:fromDirect:toDirect
 	 */
 	public static Map<String, AccseWalkTime> accseWalkTimeDict = new TreeMap<>();
+	/**
+	 * key:pltfSn==1:pltfId
+	 */
+	public static Map<String, List<RunMapKey>> runMapCursorMap = new TreeMap<>();
+	/**
+	 * key:tripNo
+	 */
+	public static Map<String, List<RunMap>> runMapMap = new TreeMap<>();
 }

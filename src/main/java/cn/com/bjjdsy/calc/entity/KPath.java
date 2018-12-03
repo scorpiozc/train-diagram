@@ -1,5 +1,7 @@
 package cn.com.bjjdsy.calc.entity;
 
+import java.util.List;
+
 public class KPath {
 
 	private String fromStation;
@@ -8,6 +10,15 @@ public class KPath {
 	private String kpath;
 	private String transferStation;
 	private String direct;
+	private List<TransferStation> transferStations;
+
+	public List<TransferStation> getTransferStations() {
+		return transferStations;
+	}
+
+	public void setTransferStations(List<TransferStation> transferStations) {
+		this.transferStations = transferStations;
+	}
 
 	public String getDirect() {
 		return direct;
