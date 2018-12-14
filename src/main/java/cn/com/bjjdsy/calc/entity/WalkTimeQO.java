@@ -7,6 +7,7 @@ public class WalkTimeQO {
 	private int fromDirect;
 	private int toDirect;
 	private String cmDate;
+	private int positionTime;// minutes
 
 	public String getFromAccStationCode() {
 		return fromAccStationCode;
@@ -47,4 +48,13 @@ public class WalkTimeQO {
 	public void setCmDate(String cmDate) {
 		this.cmDate = cmDate;
 	}
+
+	public int getPositionTime() {
+		return positionTime;
+	}
+
+	public void setPositionTime(int positionTime) {
+		this.positionTime = positionTime;
+	}
+
 }

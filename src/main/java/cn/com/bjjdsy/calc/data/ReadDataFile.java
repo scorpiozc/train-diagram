@@ -12,16 +12,18 @@ public abstract class ReadDataFile {
 	static final Logger logger = LoggerFactory.getLogger(ReadDataFile.class);
 
 	public void read(String filename) {
+		int linenum = 0;
 		File dataFile = new File(this.getClass().getResource(filename).getFile());
 		try (BufferedReader reader = new BufferedReader(new FileReader(dataFile));) {
 			reader.readLine();
-			reader.readLine();
+//			reader.readLine();
 			while (true) {
 				String line = reader.readLine();
 				if (line == null || line.length() == 0) {
 					break;
 				}
 				// parse the data
+//				logger.info("linenum {}", ++linenum);
 				String[] data = line.split(",");
 				this.parseData(data);
 			}

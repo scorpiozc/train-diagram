@@ -12,8 +12,8 @@ public class ReadAccseTimeAttributeFile extends ReadDataFile {
 		AccseTimeAttribute timeAttr = new AccseTimeAttribute();
 		timeAttr.setAccseStationCode(data[0]);
 		timeAttr.setDateType(Integer.parseInt(data[1]));
-		timeAttr.setBeginTime(Integer.parseInt(data[2]));
-		timeAttr.setTimeAttribute(Integer.parseInt(data[3]));
+		timeAttr.setBeginTime(Integer.parseInt(data[3]));
+		timeAttr.setTimeAttribute(Integer.parseInt(data[2]));
 		String key = timeAttr.getAccseStationCode() + ":" + timeAttr.getDateType();
 		if (CalcConstant.accseTimeAttributeDict.get(key) == null) {
 			CalcConstant.accseTimeAttributeDict.put(key, new ArrayList<AccseTimeAttribute>());

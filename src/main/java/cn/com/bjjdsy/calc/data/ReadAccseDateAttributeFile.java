@@ -12,7 +12,9 @@ public class ReadAccseDateAttributeFile extends ReadDataFile {
 		dateAttr.setSection(Integer.parseInt(data[1]));
 		dateAttr.setDateType(Integer.parseInt(data[2]));
 		dateAttr.setVersion(data[3]);
-		CalcConstant.accseDateAttributeDict.put(dateAttr.getCmDate(), dateAttr);
+		String key = dateAttr.getCmDate().split(" ")[0].replaceAll("/", "");
+//		System.out.println("cmDate:" + key);
+		CalcConstant.accseDateAttributeDict.put(key, dateAttr);
 	}
 
 }

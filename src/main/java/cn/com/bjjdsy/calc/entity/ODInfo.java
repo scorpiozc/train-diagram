@@ -6,7 +6,8 @@ public class ODInfo {
 
 	private String oStationCode;
 	private String dStationCode;
-	private Date oDDate;
+	private String entryTime;
+	private String outTime;
 	private int fromDirect;
 	private int toDirect;
 
@@ -42,11 +43,20 @@ public class ODInfo {
 		this.dStationCode = dStationCode;
 	}
 
-	public Date getoDDate() {
-		return oDDate;
+	public String getEntryTime() {
+		return entryTime;
 	}
 
-	public void setoDDate(Date oDDate) {
-		this.oDDate = oDDate;
+	public void setEntryTime(String entryTime) {
+		this.entryTime = entryTime;
 	}
+
+	public String getOutTime() {
+		return outTime;
+	}
+
+	public void setOutTime(String outTime) {
+		this.outTime = outTime;
+	}
+
 }

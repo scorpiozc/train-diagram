@@ -2,13 +2,23 @@ package cn.com.bjjdsy.calc.entity;
 
 public class RunMapKey implements Comparable<RunMapKey> {
 
-	private int depTime;
+	private String depTime;
+	private String tripNo;
+	private String lineNo;
 
-	public int getDepTime() {
+	public String getLineNo() {
+		return lineNo;
+	}
+
+	public void setLineNo(String lineNo) {
+		this.lineNo = lineNo;
+	}
+
+	public String getDepTime() {
 		return depTime;
 	}
 
-	public void setDepTime(int depTime) {
+	public void setDepTime(String depTime) {
 		this.depTime = depTime;
 	}
 
@@ -20,11 +30,9 @@ public class RunMapKey implements Comparable<RunMapKey> {
 		this.tripNo = tripNo;
 	}
 
-	private String tripNo;
-
 	@Override
 	public int compareTo(RunMapKey o) {
-		return this.getDepTime() - o.getDepTime();
+		return (int) (Long.parseLong(this.getDepTime()) - Long.parseLong(o.getDepTime()));
 	}
 
 }

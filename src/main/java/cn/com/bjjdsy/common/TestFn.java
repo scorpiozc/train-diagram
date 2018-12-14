@@ -1,6 +1,7 @@
 package cn.com.bjjdsy.common;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -8,7 +9,16 @@ import java.util.TreeMap;
 public class TestFn {
 
 	public static void main(String[] args) {
-		testTreeMap();
+		// testTreeMap();
+		Map<String, Integer> m1 = new HashMap<String, Integer>();
+		Map<String, Integer> m2 = new HashMap<String, Integer>();
+		m1.put("a", 1);
+		m1.put("b", 2);
+		m2.putAll(m1);
+		m2.forEach((k, v) -> {
+			System.out.println(k + ":" + v);
+		});
+
 	}
 
 	private static void testTreeMap() {

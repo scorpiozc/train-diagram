@@ -18,8 +18,9 @@ public class ReadAccseWalkTimeFile extends ReadDataFile {
 		walkTime.setMiddle(Integer.parseInt(data[7]));
 		walkTime.setSlow(Integer.parseInt(data[8]));
 		walkTime.setVersionId(data[9]);
-		String key = walkTime.getFromAccStationCode() + walkTime.getToAccStationCode() + walkTime.getDateType()
-				+ walkTime.getTimeAttr() + walkTime.getFromDirect() + walkTime.getToDirect();
+		String key = walkTime.getFromAccStationCode() + ":" + walkTime.getToAccStationCode() + ":"
+				+ walkTime.getDateType() + ":" + walkTime.getTimeAttr() + ":" + walkTime.getFromDirect() + ":"
+				+ walkTime.getToDirect();
 		CalcConstant.accseWalkTimeDict.put(key, walkTime);
 	}
 

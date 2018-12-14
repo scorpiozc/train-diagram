@@ -1,6 +1,9 @@
 package cn.com.bjjdsy.calc.entity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class KPath {
 
@@ -9,8 +12,23 @@ public class KPath {
 	private String ksn;
 	private String kpath;
 	private String transferStation;
-	private String direct;
+	private Map<String, TransferStation> transferStationMap;// key:
+	private List<KPath> subPaths;
+
+	// for sub path
+	private int direct;
 	private List<TransferStation> transferStations;
+	private List<String> stationCodes;
+	private int time;
+	private int oTime;
+	private int dTime;
+	private int tTime;
+
+	public KPath() {
+		this.transferStations = new ArrayList<>();
+		this.stationCodes = new ArrayList<>();
+		this.transferStationMap = new HashMap<>();
+	}
 
 	public List<TransferStation> getTransferStations() {
 		return transferStations;
@@ -20,11 +38,11 @@ public class KPath {
 		this.transferStations = transferStations;
 	}
 
-	public String getDirect() {
+	public int getDirect() {
 		return direct;
 	}
 
-	public void setDirect(String direct) {
+	public void setDirect(int direct) {
 		this.direct = direct;
 	}
 
@@ -66,6 +84,70 @@ public class KPath {
 
 	public void setTransferStation(String transferStation) {
 		this.transferStation = transferStation;
+	}
+
+	public List<KPath> getSubPaths() {
+		return subPaths;
+	}
+
+	public void setSubPaths(List<KPath> subPaths) {
+		this.subPaths = subPaths;
+	}
+
+	public int getTime() {
+		return time;
+	}
+
+	public void setTime(int time) {
+		this.time = time;
+	}
+
+	public int getoTime() {
+		return oTime;
+	}
+
+	public void setoTime(int oTime) {
+		this.oTime = oTime;
+	}
+
+	public int getdTime() {
+		return dTime;
+	}
+
+	public void setdTime(int dTime) {
+		this.dTime = dTime;
+	}
+
+	public int gettTime() {
+		return tTime;
+	}
+
+	public void settTime(int tTime) {
+		this.tTime = tTime;
+	}
+
+	public void addTime(int time) {
+		this.time += time;
+	}
+
+	public void addTTime(int tTime) {
+		this.tTime += tTime;
+	}
+
+	public List<String> getStationCodes() {
+		return stationCodes;
+	}
+
+	public void setStationCodes(List<String> stationCodes) {
+		this.stationCodes = stationCodes;
+	}
+
+	public Map<String, TransferStation> getTransferStationMap() {
+		return transferStationMap;
+	}
+
+	public void setTransferStationMap(Map<String, TransferStation> transferStationMap) {
+		this.transferStationMap = transferStationMap;
 	}
 
 }
