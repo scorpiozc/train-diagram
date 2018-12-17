@@ -20,6 +20,7 @@ public class CalcConstant {
 	public static final String ACCSE_WALK_TIME = "/data/accse_walk_time.txt";
 	public static final String K_PATH = "/data/k_path.txt";
 	public static final String PLAN_RUN_MAP = "/data/plan_run_map.txt";
+	public static final String SECTION_BASE_INFO = "/data/section_base_info.txt";
 
 	/**
 	 * key:section:date_type (accse_date_attribute) value:date_type
@@ -44,6 +45,10 @@ public class CalcConstant {
 	 * key:fromAccStationCode:toAccStationCode:dateType:timeAttr:fromDirect:toDirect
 	 */
 	public static Map<String, AccseWalkTime> accseWalkTimeDict = new TreeMap<>();
+	/**
+	 * key:fromStation:toStation,value:direct
+	 */
+	public static Map<String, Integer> sectionDict = new HashMap<>();
 	/**
 	 * key:pltfId:direction
 	 */

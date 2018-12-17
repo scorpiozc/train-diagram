@@ -1,6 +1,7 @@
 package cn.com.bjjdsy.calc.walktime;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -28,13 +29,14 @@ public class CalcWalkTime {
 		for (AccseTimeAttribute timeAttr : accseTimeAttributeList) {
 			accseTimeAttributeMap.put(timeAttr.getBeginTime(), timeAttr.getTimeAttribute());
 		}
-		accseTimeAttributeMap.put(23400, 0);
+		accseTimeAttributeMap.put(entryTime, 0);
 //		accseTimeAttributeMap.keySet().forEach(k -> {
 //			System.out.println(k);
 //		});
 		// get prev elements
 		List<Integer> keyList = new ArrayList<>(accseTimeAttributeMap.keySet());
-		int idx = keyList.indexOf(23400);
+		Collections.sort(keyList);
+		int idx = keyList.indexOf(entryTime);
 		int prev = keyList.get(idx - 1);
 		int timeAttribute = accseTimeAttributeMap.get(prev);
 //		System.out.println(prev + ":" + timeAttribute);
@@ -66,8 +68,8 @@ public class CalcWalkTime {
 				qo.getFromDirect(), qo.getToDirect(), qo.getPositionTime());
 	}
 
-	private AccseWalkTime getWalkTime(String cmDate, String fromAccStationCode, String toAccStationCode,
-			int fromDirect, int toDirect, int entryTime) {
+	private AccseWalkTime getWalkTime(String cmDate, String fromAccStationCode, String toAccStationCode, int fromDirect,
+			int toDirect, int entryTime) {
 		AccseDateAttribute dateAttr = this.getAccseDateAttribute(cmDate);
 		int dateType = dateAttr.getDateType();
 		int timeAttr = this.getTimeAttribute(fromAccStationCode, entryTime, dateAttr);

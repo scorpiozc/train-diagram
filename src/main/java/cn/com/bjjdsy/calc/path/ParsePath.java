@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import cn.com.bjjdsy.calc.entity.KPath;
 import cn.com.bjjdsy.calc.entity.TransferStation;
+import cn.com.bjjdsy.common.CalcConstant;
 
 public class ParsePath {
 
@@ -98,8 +99,7 @@ public class ParsePath {
 	}
 
 	private int getDirect(String start, String end) {
-		// todo
-		// section
+		CalcConstant.sectionDict.get(start + ":" + end);
 		return 1;
 	}
 }

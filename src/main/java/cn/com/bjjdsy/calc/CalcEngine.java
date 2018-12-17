@@ -3,6 +3,7 @@ package cn.com.bjjdsy.calc;
 import java.text.ParseException;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,10 +15,10 @@ import org.slf4j.LoggerFactory;
 import cn.com.bjjdsy.calc.data.LoadData;
 import cn.com.bjjdsy.calc.entity.AccseWalkTime;
 import cn.com.bjjdsy.calc.entity.KPath;
-import cn.com.bjjdsy.calc.entity.ODInfo;
 import cn.com.bjjdsy.calc.entity.RunMap;
 import cn.com.bjjdsy.calc.entity.RunMapKey;
 import cn.com.bjjdsy.calc.entity.TransferStation;
+import cn.com.bjjdsy.calc.entity.UDInfo;
 import cn.com.bjjdsy.calc.entity.WalkTimeQO;
 import cn.com.bjjdsy.calc.path.ParsePath;
 import cn.com.bjjdsy.calc.walktime.CalcWalkTime;
@@ -27,6 +28,7 @@ public class CalcEngine {
 
 	static final Logger logger = LoggerFactory.getLogger(CalcEngine.class);
 	final String pattern = "yyyyMMddHHmmss";
+	private Map<String, KPath> pathMap;
 
 	public static void main(String[] args) {
 //		try {
@@ -42,6 +44,7 @@ public class CalcEngine {
 	public void start() {
 		try {
 			new LoadData().load();
+			pathMap = new HashMap<>();
 			calc();
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -57,13 +60,12 @@ public class CalcEngine {
 		path.setKpath("113-114-204-205-206-207-208");
 		path.setTransferStation("114;204");
 		List<KPath> pathList = new ParsePath().parse(path);
-		ODInfo od = new ODInfo();
-//		od.setoDDate(DateUtils.parseDate("20180910063000", "yyyyMMddHHmmss"));
-		od.setEntryTime("20180910063000");
+		UDInfo ud = new UDInfo();
+		ud.setEntryTime("20180910063000");
 		CalcWalkTime calcWalkTime = new CalcWalkTime();
 		int i = 1;
 		int quick = 0;
-		String positionTime = od.getEntryTime().substring(8);
+		String positionTime = ud.getEntryTime().substring(8);
 		WalkTimeQO qo = new WalkTimeQO();
 		qo.setCmDate("20180910");
 		for (KPath subPath : pathList) {
@@ -100,7 +102,7 @@ public class CalcEngine {
 			if (next == null) {
 				break;
 			}
-			logger.info(next.getDepTime() + ":" + next.getTripNo());
+			logger.info("next deptime:{} tripno:{}", next.getDepTime(), next.getTripNo());
 			positionTime = this.getNextPositionTime(path, subPath, next);
 			qo.setPositionTime(this.timeToSeconds(positionTime));
 
@@ -119,7 +121,7 @@ public class CalcEngine {
 			// calc travel_time
 			i++;
 		}
-
+		pathMap.put("", path);
 	}
 
 	private String calcPositionTime(Date src, int increase) {
@@ -177,4 +179,9 @@ public class CalcEngine {
 		return stopStation.getArrTime();
 	}
 
+	private void print() {
+		pathMap.forEach((k, v) -> {
+			logger.info("");
+		});
+	}
 }

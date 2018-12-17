@@ -2,7 +2,7 @@ package cn.com.bjjdsy.calc.entity;
 
 import java.util.Date;
 
-public class ODInfo {
+public class UDInfo {
 
 	private String oStationCode;
 	private String dStationCode;
@@ -10,6 +10,15 @@ public class ODInfo {
 	private String outTime;
 	private int fromDirect;
 	private int toDirect;
+	private String pathSn;
+
+	public String getPathSn() {
+		return pathSn;
+	}
+
+	public void setPathSn(String pathSn) {
+		this.pathSn = pathSn;
+	}
 
 	public int getFromDirect() {
 		return fromDirect;
