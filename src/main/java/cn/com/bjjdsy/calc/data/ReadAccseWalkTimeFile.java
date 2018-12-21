@@ -3,7 +3,7 @@ package cn.com.bjjdsy.calc.data;
 import cn.com.bjjdsy.calc.entity.AccseWalkTime;
 import cn.com.bjjdsy.common.CalcConstant;
 
-public class ReadAccseWalkTimeFile extends ReadDataFile {
+public class ReadAccseWalkTimeFile extends AbstractReadDataFile {
 
 	@Override
 	public void parseData(String[] data) {

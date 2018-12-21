@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import cn.com.bjjdsy.calc.entity.AccseTimeAttribute;
 import cn.com.bjjdsy.common.CalcConstant;
 
-public class ReadAccseTimeAttributeFile extends ReadDataFile {
+public class ReadAccseTimeAttributeFile extends AbstractReadDataFile {
 
 	@Override
 	public void parseData(String[] data) {

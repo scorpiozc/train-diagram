@@ -21,8 +21,10 @@ public class LoadData {
 		this.loadAccseDateAttribute();
 		this.loadAccseTimeAttribute();
 		this.loadAccseWalkTime();
+		this.loadParamSectionTcc();
 		this.loadKPath();
 		this.loadRunMap();
+		this.loadSection();
 //		CalcConstant.runMapKeyMap.forEach((key, value) -> {
 //
 //			logger.info("key:{}", key);
@@ -31,7 +33,7 @@ public class LoadData {
 //			});
 //		});
 		timer.stop();
-		logger.info("load data from file: {} seconds\n", timer.time());
+		logger.info("load data spend: {} seconds\n", String.format("%f", timer.time()));
 	}
 
 	private void loadDateTypeMap() {
@@ -48,32 +50,45 @@ public class LoadData {
 	}
 
 	private void loadAccseDateAttribute() {
-		ReadDataFile rdf = new ReadAccseDateAttributeFile();
+		AbstractReadDataFile rdf = new ReadAccseDateAttributeFile();
 		rdf.read(CalcConstant.ACCSE_DATE_ATTRIBUTE);
 	}
 
 	private void loadAccseTimeAttribute() {
-		ReadDataFile rdf = new ReadAccseTimeAttributeFile();
+		AbstractReadDataFile rdf = new ReadAccseTimeAttributeFile();
 		rdf.read(CalcConstant.ACCSE_TIME_ATTRIBUTE);
 	}
 
 	private void loadAccseWalkTime() {
-		ReadDataFile rdf = new ReadAccseWalkTimeFile();
+		AbstractReadDataFile rdf = new ReadAccseWalkTimeFile();
 		rdf.read(CalcConstant.ACCSE_WALK_TIME);
 	}
 
 	private void loadKPath() {
-		ReadDataFile rdf = new ReadKPathFile();
+		AbstractReadDataFile rdf = new ReadKPathFile();
 		rdf.read(CalcConstant.K_PATH);
 	}
 
 	private void loadRunMap() {
-		ReadDataFile rdf = new ReadRunMapFile();
+		AbstractReadDataFile rdf = new ReadRunMapFile();
 		rdf.read(CalcConstant.PLAN_RUN_MAP);
 //		CalcConstant.runMapMap.forEach((key, value) -> {
 //			value.forEach((k, v) -> {
 //				System.out.println(key + ":" + k + ":" + v.getDepTime());
 //			});
+//		});
+	}
+
+	private void loadParamSectionTcc() {
+		AbstractReadDataFile rdf = new ReadParamSectionTccFile();
+		rdf.read(CalcConstant.PARAM_SECTION_TCC);
+	}
+
+	private void loadSection() {
+		AbstractReadDataFile rdf = new ReadSectionFile();
+		rdf.read(CalcConstant.SECTION_BASE_INFO);
+//		CalcConstant.sectionDict.forEach((k, v) -> {
+//			logger.info("{} {}", k, v);
 //		});
 	}
 }

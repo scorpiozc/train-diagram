@@ -8,6 +8,8 @@ public class WalkTimeQO {
 	private int toDirect;
 	private String cmDate;
 	private int positionTime;// minutes
+	private String fromTransfer;
+	private String toTransfer;
 
 	public String getFromAccStationCode() {
 		return fromAccStationCode;
@@ -55,6 +57,22 @@ public class WalkTimeQO {
 
 	public void setPositionTime(int positionTime) {
 		this.positionTime = positionTime;
+	}
+
+	public String getFromTransfer() {
+		return fromTransfer;
+	}
+
+	public void setFromTransfer(String fromTransfer) {
+		this.fromTransfer = fromTransfer;
+	}
+
+	public String getToTransfer() {
+		return toTransfer;
+	}
+
+	public void setToTransfer(String toTransfer) {
+		this.toTransfer = toTransfer;
 	}
 
 }

@@ -1,6 +1,7 @@
 package cn.com.bjjdsy.calc;
 
 import java.text.ParseException;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,12 +18,16 @@ import cn.com.bjjdsy.calc.entity.AccseWalkTime;
 import cn.com.bjjdsy.calc.entity.KPath;
 import cn.com.bjjdsy.calc.entity.RunMap;
 import cn.com.bjjdsy.calc.entity.RunMapKey;
+import cn.com.bjjdsy.calc.entity.SubPath;
 import cn.com.bjjdsy.calc.entity.TransferStation;
-import cn.com.bjjdsy.calc.entity.UDInfo;
 import cn.com.bjjdsy.calc.entity.WalkTimeQO;
 import cn.com.bjjdsy.calc.path.ParsePath;
 import cn.com.bjjdsy.calc.walktime.CalcWalkTime;
 import cn.com.bjjdsy.common.CalcConstant;
+import cn.com.bjjdsy.common.WalkTimeEnum;
+import cn.com.bjjdsy.common.util.JsonUtils;
+import cn.com.bjjdsy.common.util.LocalDateTimeUtils;
+import cn.com.bjjdsy.common.util.Stopwatch;
 
 public class CalcEngine {
 
@@ -37,49 +42,71 @@ public class CalcEngine {
 //			System.out.println(DateFormatUtils.format(testDate, "yyyyMMddHHmmss"));
 //		} catch (ParseException e) {
 //			e.printStackTrace();
-//		}
-		new CalcEngine().timeToMinutes("063000");
+//		}20180910063955 20180910064741
+		long duration = Duration
+				.between(LocalDateTimeUtils.parseStringToDateTime("20180910063955", LocalDateTimeUtils.PATTERN),
+						LocalDateTimeUtils.parseStringToDateTime("20180910064741", LocalDateTimeUtils.PATTERN))
+				.toMillis() / 1000;
+//		logger.info("duration:{}", duration);
+		Stopwatch timer = new Stopwatch();
+		timer.start();
+		CalcEngine calcEngine = new CalcEngine();
+		calcEngine.start();
+		timer.stop();
+		logger.info("calc spend: {} seconds\n", String.format("%f", timer.time()));
+		timer.start();
+		calcEngine.print();
+		timer.stop();
+		logger.info("print spend: {} seconds\n", String.format("%f", timer.time()));
+		int speed = WalkTimeEnum.QUICK.ordinal();
+		speed = WalkTimeEnum.SLOW.ordinal();
+//		logger.info("speed:{}", speed);
 	}
 
-	public void start() {
-		try {
-			new LoadData().load();
-			pathMap = new HashMap<>();
-			calc();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+	public CalcEngine start() {
+		new LoadData().load();
+
+		pathMap = new HashMap<>();
+		CalcConstant.kPathList.forEach(p -> {
+			try {
+				this.getEntryTime(p);
+				calc(p);
+			} catch (ParseException e) {
+				logger.error(e.getMessage(), e);
+			}
+		});
+		return this;
 	}
 
-	private void calc() throws ParseException {
+	private void calc(KPath path) throws ParseException {
+		int speed = WalkTimeEnum.QUICK.ordinal();
 		// parse path 113,208,1,1-2,113-114-204-205-206-207-208,856,17.77,114;204
-		KPath path = new KPath();
-		path.setFromStation("113");
-		path.setToStation("208");
-		path.setKsn("1");
-		path.setKpath("113-114-204-205-206-207-208");
-		path.setTransferStation("114;204");
-		List<KPath> pathList = new ParsePath().parse(path);
-		UDInfo ud = new UDInfo();
-		ud.setEntryTime("20180910063000");
+//		KPath path = new KPath();
+//		path.setFromStation("113");
+//		path.setToStation("208");
+//		path.setKsn("1");
+//		path.setKpath("113-114-204-205-206-207-208-209-555-557");
+//		path.setTransferStation("114;204-209;555");
+		List<SubPath> pathList = new ParsePath().parse(path);
 		CalcWalkTime calcWalkTime = new CalcWalkTime();
 		int i = 1;
 		int quick = 0;
-		String positionTime = ud.getEntryTime().substring(8);
+		String positionTime = path.getEntryTime();
 		WalkTimeQO qo = new WalkTimeQO();
-		qo.setCmDate("20180910");
-		for (KPath subPath : pathList) {
+		qo.setCmDate(positionTime.substring(0, 8));
+		for (SubPath subPath : pathList) {
 			qo.setFromAccStationCode(subPath.getFromStation());
 			qo.setToAccStationCode(subPath.getToStation());
 			qo.setToDirect(subPath.getDirect());
-			qo.setPositionTime(this.timeToSeconds(positionTime));
+			qo.setPositionTime(this.timeToSeconds(positionTime.substring(8)));
 			// entry time
 			if (i == 1) {
+				logger.info("entry station time:{}", positionTime);
 				AccseWalkTime walkTime = calcWalkTime.getOWalkTime(qo);
 				quick = walkTime.getQuick();
-				path.setoTime(quick);
-				path.addTime(quick);
-
+				path.setoSpendTime(quick);
+				path.addTotalTime(quick);
+				logger.info("entry quick walk spend:{}", quick);
 			}
 			// untransfer
 			if (pathList.size() == 1 || i == 1) {
@@ -87,31 +114,44 @@ public class CalcEngine {
 			}
 			// transfer
 			else {
-				TransferStation transfer = subPath.getTransferStationMap()
+				logger.info("transfer!");
+				TransferStation transfer = path.getTransferStationMap()
 						.get(subPath.getFromStation() + ":" + subPath.getDirect());
 				qo.setFromDirect(transfer.getFromDirect());
+				qo.setFromTransfer(transfer.getFromStation());
+				qo.setToTransfer(transfer.getToStation());
 				AccseWalkTime walkTime = calcWalkTime.getTWalkTime(qo);
 				quick = walkTime.getQuick();
+				path.addTotalTime(quick);
+				path.addTSpendTime(quick);
+				subPath.setTwalktime(quick);
+				logger.info("transfer quick walk spend:{}", quick);
 			}
 
 			// sub path time
 			String quickDeptTime = this.calcPositionTime(DateUtils.parseDate(positionTime, pattern), quick);
-			logger.info("quickDeptTime:" + quickDeptTime);
+			logger.info("cur position time:{}", quickDeptTime);
 			// find the trip
-			RunMapKey next = this.getRunMapKey(path, quickDeptTime);
+			RunMapKey next = this.getRunMapKey(subPath, quickDeptTime);
 			if (next == null) {
+				logger.warn("no runmap info exit!");
 				break;
 			}
 			logger.info("next deptime:{} tripno:{}", next.getDepTime(), next.getTripNo());
 			positionTime = this.getNextPositionTime(path, subPath, next);
+			logger.info("next position time:{}", positionTime);
 			qo.setPositionTime(this.timeToSeconds(positionTime));
 
 			if (i == pathList.size()) {
 //out time
 				AccseWalkTime walkTime = calcWalkTime.getDWalkTime(qo);
 				quick = walkTime.getQuick();
-				path.setdTime(quick);
-				path.addTime(quick);
+				path.setdSpendTime(quick);
+				path.addTotalTime(quick);
+				logger.info("out quick walk spend:{}", quick);
+				String outTime = this.calcPositionTime(DateUtils.parseDate(positionTime, pattern), quick);
+				path.setOutTime(outTime);
+				logger.info("out station time:{}", outTime);
 			}
 
 			// ever sub path time
@@ -121,7 +161,7 @@ public class CalcEngine {
 			// calc travel_time
 			i++;
 		}
-		pathMap.put("", path);
+		pathMap.put(path.getKsn(), path);
 	}
 
 	private String calcPositionTime(Date src, int increase) {
@@ -140,12 +180,14 @@ public class CalcEngine {
 		String hh = time.substring(0, 2);
 		String mm = time.substring(2, 4);
 		String ss = time.substring(4, 6);
-		System.out.println(Integer.parseInt(hh) * 3600 + Integer.parseInt(mm) * 60 + Integer.parseInt(ss));
+//		logger.info("time to seconds:{}",
+//				Integer.parseInt(hh) * 3600 + Integer.parseInt(mm) * 60 + Integer.parseInt(ss));
 		return Integer.parseInt(hh) * 3600 + Integer.parseInt(mm) * 60 + Integer.parseInt(ss);
 	}
 
-	private RunMapKey getRunMapKey(KPath subPath, String quickDeptTime) {
+	private RunMapKey getRunMapKey(SubPath subPath, String quickDeptTime) {
 		String key = subPath.getFromStation() + ":" + subPath.getDirect();
+		logger.info("key:{}", key);
 		List<RunMapKey> runMapKeyList = CalcConstant.runMapKeyMap.get(key);
 		// sort deptime
 		RunMapKey tmp = new RunMapKey();
@@ -153,7 +195,7 @@ public class CalcEngine {
 		runMapKeyList.add(tmp);
 		Collections.sort(runMapKeyList);
 		runMapKeyList.forEach(k -> {
-			logger.info(k.getDepTime());
+//			logger.info("deptime:{} tripno:{}", k.getDepTime(), k.getTripNo());
 		});
 		int idx = runMapKeyList.indexOf(tmp);
 
@@ -165,23 +207,43 @@ public class CalcEngine {
 		return next;
 	}
 
-	private String getNextPositionTime(KPath path, KPath subPath, RunMapKey next) {
+	private String getNextPositionTime(KPath path, SubPath subPath, RunMapKey next) {
 		Map<String, RunMap> runMaps = CalcConstant.runMapMap.get(next.getLineNo() + ":" + next.getTripNo());
+		runMaps.forEach((k, v) -> {
+			// System.out.println(k);
+		});
 		// get path runtime
+//		System.out.println(subPath.getFromStation() + ":" + subPath.getToStation());
 		RunMap startStation = runMaps.get(subPath.getFromStation());
 		RunMap stopStation = runMaps.get(subPath.getToStation());
-		logger.info("{} start {}:{} stop {}", startStation.getPltfId(), startStation.getDepTime(),
-				stopStation.getPltfId(), stopStation.getArrTime());
+		long duration = Duration.between(LocalDateTimeUtils.parseStringToDateTime(startStation.getDepTime(), pattern),
+				LocalDateTimeUtils.parseStringToDateTime(stopStation.getArrTime(), pattern)).toMillis() / 1000;
+		logger.info("{} start:{} {} stop:{} spend:{}", startStation.getPltfId(), startStation.getDepTime(),
+				stopStation.getPltfId(), stopStation.getArrTime(), duration);
+
 		int runtime = this.timeToSeconds(stopStation.getArrTime().substring(8))
 				- this.timeToSeconds(startStation.getDepTime().substring(8));
-		path.addTime(runtime);
-		subPath.setTime(runtime);
+		path.addTotalTime(runtime);
+		path.addRuntime(runtime);
+		subPath.setRuntime(runtime);
+		subPath.setTripNo(next.getTripNo());
 		return stopStation.getArrTime();
+	}
+
+	private void getEntryTime(KPath path) throws ParseException {
+		List<String> deptimeList = CalcConstant.deptimeMap.get(path.getFromStation());
+		Collections.sort(deptimeList);
+		String entryTime = this.calcPositionTime(DateUtils.parseDate(deptimeList.get(0), pattern), -60);
+		path.setEntryTime(entryTime);
+		System.out.println(path.getFromStation() + ":" + deptimeList.get(0) + ":" + entryTime);
 	}
 
 	private void print() {
 		pathMap.forEach((k, v) -> {
-			logger.info("");
+//			logger.info("{},{},{},{},{},{},{},{}", v.getFromStation(), v.getToStation(), v.getKpath(), v.getEntryTime(),
+//					v.getoSpendTime(), v.getOutTime(), v.getdSpendTime(), v.getTotalTime());
+			logger.info("{}", JsonUtils.writeObject(v));
 		});
 	}
+
 }

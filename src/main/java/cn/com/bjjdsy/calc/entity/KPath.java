@@ -5,24 +5,46 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 public class KPath {
 
+	@JSONField(ordinal = 1, name = "O")
 	private String fromStation;
+	@JSONField(ordinal = 2, name = "D")
 	private String toStation;
+	@JSONField(serialize = false)
 	private String ksn;
+	@JSONField(ordinal = 3, name = "path")
 	private String kpath;
+	@JSONField(ordinal = 4, name = "trans")
 	private String transferStation;
-	private Map<String, TransferStation> transferStationMap;// key:
-	private List<KPath> subPaths;
+	@JSONField(serialize = false)
+	private Map<String, TransferStation> transferStationMap;
+	@JSONField(ordinal = 12, name = "subs")
+	private List<SubPath> subPaths;
 
 	// for sub path
+	@JSONField(serialize = false)
 	private int direct;
+	@JSONField(serialize = false)
 	private List<TransferStation> transferStations;
+	@JSONField(serialize = false)
 	private List<String> stationCodes;
-	private int time;
-	private int oTime;
-	private int dTime;
-	private int tTime;
+	@JSONField(ordinal = 11, name = "totaltime")
+	private int totalTime;
+	@JSONField(ordinal = 7, name = "owalktime")
+	private int oSpendTime;
+	@JSONField(ordinal = 8, name = "dwalktime")
+	private int dSpendTime;
+	@JSONField(ordinal = 9, name = "twalktime")
+	private int tSpendTime;
+	@JSONField(ordinal = 10, name = "runtime")
+	private int runtime;
+	@JSONField(ordinal = 5, name = "begin")
+	private String entryTime;
+	@JSONField(ordinal = 6, name = "end")
+	private String outTime;
 
 	public KPath() {
 		this.transferStations = new ArrayList<>();
@@ -86,52 +108,28 @@ public class KPath {
 		this.transferStation = transferStation;
 	}
 
-	public List<KPath> getSubPaths() {
+	public List<SubPath> getSubPaths() {
 		return subPaths;
 	}
 
-	public void setSubPaths(List<KPath> subPaths) {
+	public void setSubPaths(List<SubPath> subPaths) {
 		this.subPaths = subPaths;
 	}
 
-	public int getTime() {
-		return time;
+	public int getTotalTime() {
+		return totalTime;
 	}
 
-	public void setTime(int time) {
-		this.time = time;
+	public void setTotalTime(int totalTime) {
+		this.totalTime = totalTime;
 	}
 
-	public int getoTime() {
-		return oTime;
+	public void addTotalTime(int totalTime) {
+		this.totalTime += totalTime;
 	}
 
-	public void setoTime(int oTime) {
-		this.oTime = oTime;
-	}
-
-	public int getdTime() {
-		return dTime;
-	}
-
-	public void setdTime(int dTime) {
-		this.dTime = dTime;
-	}
-
-	public int gettTime() {
-		return tTime;
-	}
-
-	public void settTime(int tTime) {
-		this.tTime = tTime;
-	}
-
-	public void addTime(int time) {
-		this.time += time;
-	}
-
-	public void addTTime(int tTime) {
-		this.tTime += tTime;
+	public void addTSpendTime(int tSpendTime) {
+		this.tSpendTime += tSpendTime;
 	}
 
 	public List<String> getStationCodes() {
@@ -150,4 +148,55 @@ public class KPath {
 		this.transferStationMap = transferStationMap;
 	}
 
+	public int getoSpendTime() {
+		return oSpendTime;
+	}
+
+	public void setoSpendTime(int oSpendTime) {
+		this.oSpendTime = oSpendTime;
+	}
+
+	public int getdSpendTime() {
+		return dSpendTime;
+	}
+
+	public void setdSpendTime(int dSpendTime) {
+		this.dSpendTime = dSpendTime;
+	}
+
+	public int gettSpendTime() {
+		return tSpendTime;
+	}
+
+	public void settSpendTime(int tSpendTime) {
+		this.tSpendTime = tSpendTime;
+	}
+
+	public String getEntryTime() {
+		return entryTime;
+	}
+
+	public void setEntryTime(String entryTime) {
+		this.entryTime = entryTime;
+	}
+
+	public String getOutTime() {
+		return outTime;
+	}
+
+	public void setOutTime(String outTime) {
+		this.outTime = outTime;
+	}
+
+	public int getRuntime() {
+		return runtime;
+	}
+
+	public void setRuntime(int runtime) {
+		this.runtime = runtime;
+	}
+
+	public void addRuntime(int runtime) {
+		this.runtime += runtime;
+	}
 }

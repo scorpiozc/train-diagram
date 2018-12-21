@@ -3,7 +3,7 @@ package cn.com.bjjdsy.calc.data;
 import cn.com.bjjdsy.calc.entity.AccseDateAttribute;
 import cn.com.bjjdsy.common.CalcConstant;
 
-public class ReadAccseDateAttributeFile extends ReadDataFile {
+public class ReadAccseDateAttributeFile extends AbstractReadDataFile {
 
 	@Override
 	public void parseData(String[] data) {

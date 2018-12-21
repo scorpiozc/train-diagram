@@ -19,8 +19,9 @@ public class CalcConstant {
 	public static final String ACCSE_TIME_ATTRIBUTE = "/data/accse_time_attribute.txt";
 	public static final String ACCSE_WALK_TIME = "/data/accse_walk_time.txt";
 	public static final String K_PATH = "/data/k_path.txt";
-	public static final String PLAN_RUN_MAP = "/data/plan_run_map.txt";
+	public static final String PLAN_RUN_MAP = "/data/route_train_record.txt";
 	public static final String SECTION_BASE_INFO = "/data/section_base_info.txt";
+	public static final String PARAM_SECTION_TCC = "/data/param_section_tcc.txt";
 
 	/**
 	 * key:section:date_type (accse_date_attribute) value:date_type
@@ -59,4 +60,10 @@ public class CalcConstant {
 	public static Map<String, Map<String, RunMap>> runMapMap = new HashMap<>();
 
 	public static List<KPath> kPathList = new ArrayList<>();
+	/**
+	 * key:tccStationCode
+	 */
+	public static Map<String, String> paramSectionTccMap = new HashMap<>();
+
+	public static Map<String, List<String>> deptimeMap = new TreeMap<>();
 }

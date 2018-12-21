@@ -29,6 +29,7 @@ public class CalcWalkTime {
 		for (AccseTimeAttribute timeAttr : accseTimeAttributeList) {
 			accseTimeAttributeMap.put(timeAttr.getBeginTime(), timeAttr.getTimeAttribute());
 		}
+		logger.info("start walking time:{}", entryTime);
 		accseTimeAttributeMap.put(entryTime, 0);
 //		accseTimeAttributeMap.keySet().forEach(k -> {
 //			System.out.println(k);
@@ -64,8 +65,8 @@ public class CalcWalkTime {
 	}
 
 	public AccseWalkTime getTWalkTime(WalkTimeQO qo) {
-		return this.getWalkTime(qo.getCmDate(), qo.getFromAccStationCode(), qo.getToAccStationCode(),
-				qo.getFromDirect(), qo.getToDirect(), qo.getPositionTime());
+		return this.getWalkTime(qo.getCmDate(), qo.getFromTransfer(), qo.getToTransfer(), qo.getFromDirect(),
+				qo.getToDirect(), qo.getPositionTime());
 	}
 
 	private AccseWalkTime getWalkTime(String cmDate, String fromAccStationCode, String toAccStationCode, int fromDirect,

@@ -4,7 +4,7 @@ import cn.com.bjjdsy.calc.entity.KPath;
 import cn.com.bjjdsy.calc.path.ParsePath;
 import cn.com.bjjdsy.common.CalcConstant;
 
-public class ReadKPathFile extends ReadDataFile {
+public class ReadKPathFile extends AbstractReadDataFile {
 
 	@Override
 	public void parseData(String[] data) {
@@ -15,8 +15,8 @@ public class ReadKPathFile extends ReadDataFile {
 		kpath.setKpath(data[4]);
 		kpath.setTransferStation(data[7]);
 
-		ParsePath parsePath = new ParsePath();
-		parsePath.parse(kpath);
+//		ParsePath parsePath = new ParsePath();
+//		parsePath.parse(kpath);
 		CalcConstant.kPathList.add(kpath);
 	}
 

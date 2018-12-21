@@ -7,9 +7,9 @@ import java.io.FileReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class ReadDataFile {
+public abstract class AbstractReadDataFile {
 
-	static final Logger logger = LoggerFactory.getLogger(ReadDataFile.class);
+	static final Logger logger = LoggerFactory.getLogger(AbstractReadDataFile.class);
 
 	public void read(String filename) {
 		int linenum = 0;
