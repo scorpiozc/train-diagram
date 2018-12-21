@@ -11,6 +11,9 @@ public class ReadRunMapFile extends AbstractReadDataFile {
 
 	@Override
 	public void parseData(String[] data) {
+		if (CalcConstant.paramSectionTccMap.get(data[7]) == null) {
+			System.out.println(data[7]);
+		}
 		RunMap runMap = new RunMap();
 		runMap.setArrTime(data[8]);
 		runMap.setDepTime(data[9]);

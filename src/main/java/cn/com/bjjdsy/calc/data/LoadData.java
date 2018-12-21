@@ -1,5 +1,10 @@
 package cn.com.bjjdsy.calc.data;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +16,15 @@ public class LoadData {
 	static final Logger logger = LoggerFactory.getLogger(LoadData.class);
 
 	public static void main(String[] args) {
-		new LoadData().load();
+		 new LoadData().load();
+		List<String> list = new ArrayList<>();
+		list.add("a");
+		list.add("b");
+		Map<Integer, List<String>> map = new HashMap<>();
+		map.put(1, list);
+		List<String> list2 = map.get(1);
+		list2.add("c");
+		map.get(1).forEach(s -> System.out.println(s));
 	}
 
 	public void load() {

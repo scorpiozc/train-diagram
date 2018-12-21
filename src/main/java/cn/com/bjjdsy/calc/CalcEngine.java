@@ -1,13 +1,18 @@
 package cn.com.bjjdsy.calc;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
@@ -15,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import cn.com.bjjdsy.calc.data.LoadData;
 import cn.com.bjjdsy.calc.entity.AccseWalkTime;
+import cn.com.bjjdsy.calc.entity.CalcPeriod;
 import cn.com.bjjdsy.calc.entity.KPath;
 import cn.com.bjjdsy.calc.entity.RunMap;
 import cn.com.bjjdsy.calc.entity.RunMapKey;
@@ -34,6 +40,7 @@ public class CalcEngine {
 	static final Logger logger = LoggerFactory.getLogger(CalcEngine.class);
 	final String pattern = "yyyyMMddHHmmss";
 	private Map<String, KPath> pathMap;
+	private List<String> paths;
 
 	public static void main(String[] args) {
 //		try {
@@ -65,12 +72,17 @@ public class CalcEngine {
 
 	public CalcEngine start() {
 		new LoadData().load();
-
 		pathMap = new HashMap<>();
+		paths = new ArrayList<>();
 		CalcConstant.kPathList.forEach(p -> {
 			try {
-				this.getEntryTime(p);
-				calc(p);
+				CalcPeriod calcPeriod = this.getEntryTime(p);
+				String positionTime = calcPeriod.getStartTime();
+				for (long i = 0; i < calcPeriod.getDuration(); i++) {
+					p.setEntryTime(positionTime);
+					calc(p);
+					positionTime = this.calcPositionTime(DateUtils.parseDate(positionTime, pattern), 60);
+				}
 			} catch (ParseException e) {
 				logger.error(e.getMessage(), e);
 			}
@@ -162,6 +174,7 @@ public class CalcEngine {
 			i++;
 		}
 		pathMap.put(path.getKsn(), path);
+		paths.add(JsonUtils.writeObject(path));
 	}
 
 	private String calcPositionTime(Date src, int increase) {
@@ -195,25 +208,29 @@ public class CalcEngine {
 		runMapKeyList.add(tmp);
 		Collections.sort(runMapKeyList);
 		runMapKeyList.forEach(k -> {
-//			logger.info("deptime:{} tripno:{}", k.getDepTime(), k.getTripNo());
+//			logger.warn("deptime:{} tripno:{}", k.getDepTime(), k.getTripNo());
 		});
 		int idx = runMapKeyList.indexOf(tmp);
 
 		// no trip info
 		if (idx == runMapKeyList.size() - 1) {
+			runMapKeyList.remove(idx);
 			return null;
 		}
 		RunMapKey next = runMapKeyList.get(idx + 1);
+		runMapKeyList.remove(idx);
 		return next;
 	}
 
 	private String getNextPositionTime(KPath path, SubPath subPath, RunMapKey next) {
 		Map<String, RunMap> runMaps = CalcConstant.runMapMap.get(next.getLineNo() + ":" + next.getTripNo());
-		runMaps.forEach((k, v) -> {
-			// System.out.println(k);
-		});
+//		runMaps.forEach((k, v) -> {
+		// System.out.println(k);
+//		});
 		// get path runtime
-//		System.out.println(subPath.getFromStation() + ":" + subPath.getToStation());
+		if (runMaps == null) {
+			System.out.println(next);
+		}
 		RunMap startStation = runMaps.get(subPath.getFromStation());
 		RunMap stopStation = runMaps.get(subPath.getToStation());
 		long duration = Duration.between(LocalDateTimeUtils.parseStringToDateTime(startStation.getDepTime(), pattern),
@@ -230,20 +247,44 @@ public class CalcEngine {
 		return stopStation.getArrTime();
 	}
 
-	private void getEntryTime(KPath path) throws ParseException {
-		List<String> deptimeList = CalcConstant.deptimeMap.get(path.getFromStation());
-		Collections.sort(deptimeList);
-		String entryTime = this.calcPositionTime(DateUtils.parseDate(deptimeList.get(0), pattern), -60);
-		path.setEntryTime(entryTime);
-		System.out.println(path.getFromStation() + ":" + deptimeList.get(0) + ":" + entryTime);
+	private CalcPeriod getEntryTime(KPath path) throws ParseException {
+		List<String> oDeptimeList = CalcConstant.deptimeMap.get(path.getFromStation());
+		Collections.sort(oDeptimeList);
+//		String startTime = oDeptimeList.get(0);
+
+		List<String> dDeptimeList = CalcConstant.deptimeMap.get(path.getToStation());
+		Collections.sort(dDeptimeList);
+//		String stopTime = dDeptimeList.get(dDeptimeList.size() - 1);
+
+		String startTime = this.calcPositionTime(DateUtils.parseDate(oDeptimeList.get(0), pattern), -60);
+		String stopTime = this.calcPositionTime(DateUtils.parseDate(oDeptimeList.get(dDeptimeList.size() - 1), pattern),
+				-60);
+
+		long duration = Duration.between(LocalDateTimeUtils.parseStringToDateTime(startTime, pattern),
+				LocalDateTimeUtils.parseStringToDateTime(stopTime, pattern)).toMinutes();
+		System.out.println("duration:" + duration);
+//		path.setEntryTime(entryTime);
+//		System.out.println(path.getFromStation() + ":" + deptimeList.get(0) + ":" + entryTime);
+		CalcPeriod calcPeriod = new CalcPeriod();
+		calcPeriod.setStartTime(startTime);
+		calcPeriod.setStopTime(stopTime);
+		calcPeriod.setDuration(duration);
+		return calcPeriod;
 	}
 
 	private void print() {
-		pathMap.forEach((k, v) -> {
+//		pathMap.forEach((k, v) -> {
 //			logger.info("{},{},{},{},{},{},{},{}", v.getFromStation(), v.getToStation(), v.getKpath(), v.getEntryTime(),
 //					v.getoSpendTime(), v.getOutTime(), v.getdSpendTime(), v.getTotalTime());
-			logger.info("{}", JsonUtils.writeObject(v));
-		});
+//			logger.info("{}", JsonUtils.writeObject(v));
+
+//		});
+		File file = new File("forward.txt");
+		try (FileOutputStream fos = new FileOutputStream(file)) {
+			IOUtils.writeLines(paths, null, fos);
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+		}
 	}
 
 }
